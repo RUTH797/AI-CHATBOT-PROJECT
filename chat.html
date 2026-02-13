@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface | RAG Chatbot</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <span>RAG Chatbot</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/chat" class="active">Chat</a>
+                <a href="/admin">Admin</a>
+                <div class="user-info">
+                    <span id="username-display"></span>
+                    <button id="logout-btn" class="btn btn-outline">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="chat-container">
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-comments"></i> Chat Sessions</h3>
+                <button id="new-chat-btn" class="btn btn-primary btn-small">
+                    <i class="fas fa-plus"></i> New Chat
+                </button>
+            </div>
+            <div class="sessions-list" id="sessions-list">
+                <!-- Sessions will load here -->
+                <div class="session-item active" data-session="default">
+                    <i class="fas fa-comment"></i>
+                    <span>Current Chat</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h4><i class="fas fa-file-alt"></i> Your Documents</h4>
+                <div class="documents-list" id="documents-list">
+                    <!-- Documents will load here -->
+                    <div class="empty-state">
+                        <i class="fas fa-file-upload"></i>
+                        <p>No documents yet</p>
+                        <a href="/admin" class="btn btn-outline btn-small">Upload</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-main">
+            <div class="chat-header">
+                <h2 id="current-session">Current Chat</h2>
+                <div class="chat-actions">
+                    <button id="clear-chat" class="btn btn-outline">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button id="export-chat" class="btn btn-outline">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will appear here -->
+                <div class="message bot welcome">
+                    <div class="avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">
+                            <strong>Hello! I'm your AI assistant.</strong><br>
+                            I can answer questions about your uploaded documents. Try asking about your services, pricing, or any content you've added to the knowledge base.
+                        </div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="input-container">
+                    <div class="input-actions">
+                        <button class="action-btn" title="Upload file">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="action-btn" title="Suggest questions">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                    <textarea 
+                        id="message-input" 
+                        placeholder="Ask a question about your documents... (Press Shift+Enter for new line)" 
+                        rows="1"
+                    ></textarea>
+                    <button id="send-btn" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-hints">
+                    <span>Try asking:</span>
+                    <button class="hint-btn" data-question="What services do we offer?">Services</button>
+                    <button class="hint-btn" data-question="Tell me about pricing">Pricing</button>
+                    <button class="hint-btn" data-question="Summarize our main features">Features</button>
+                </div>
+            </div>
+
+            <div class="chat-sources" id="chat-sources">
+                <!-- Sources will appear here when available -->
+            </div>
+        </div>
+    </main>
+
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Thinking...</p>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/chat.js"></script>
+</body>
+</html>

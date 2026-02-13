@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot with RAG</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <span>RAG Chatbot</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/chat" id="chat-link">Chat</a>
+                <a href="/admin" id="admin-link">Admin</a>
+                <div class="auth-buttons">
+                    <button id="login-btn" class="btn btn-outline">Login</button>
+                    <button id="register-btn" class="btn btn-primary">Sign Up</button>
+                </div>
+                <div class="user-info" style="display: none;">
+                    <span id="username-display"></span>
+                    <button id="logout-btn" class="btn btn-outline">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>AI-Powered Chatbot with RAG Technology</h1>
+                <p class="subtitle">Ask questions about your documents and get intelligent, context-aware responses powered by Retrieval-Augmented Generation.</p>
+                <div class="hero-buttons">
+                    <a href="/chat" class="btn btn-primary btn-large">
+                        <i class="fas fa-comment"></i> Try Chatbot
+                    </a>
+                    <a href="#features" class="btn btn-outline btn-large">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="chat-preview">
+                    <div class="chat-message user">What services do you offer?</div>
+                    <div class="chat-message bot">Based on your documents, we offer AI consulting, chatbot development, and custom software solutions.</div>
+                    <div class="chat-message user">Tell me about pricing</div>
+                    <div class="chat-message bot">Pricing varies based on project requirements. I can provide specific quotes after reviewing your needs.</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>RAG Technology</h3>
+                    <p>Uses Retrieval-Augmented Generation to provide accurate, context-aware responses from your documents.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <h3>Document Management</h3>
+                    <p>Upload PDFs, text files, and documents to build your knowledge base.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Authentication</h3>
+                    <p>JWT-based secure authentication with user-specific document access.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>Chat History</h3>
+                    <p>Save and review past conversations with source attribution.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload Documents</h3>
+                    <p>Add your PDFs, text files, or website content to the knowledge base.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Ask Questions</h3>
+                    <p>Chat naturally with the AI about your uploaded content.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Smart Answers</h3>
+                    <p>Receive accurate responses with source references from your documents.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Auth Modals -->
+    <div id="login-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username or Email</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <p id="login-error" class="error-message"></p>
+        </div>
+    </div>
+
+    <div id="register-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Create Account</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+            <p id="register-error" class="error-message"></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>AI Chatbot with RAG Technology | Built with FastAPI & LangChain</p>
+    </footer>
+
+    <!-- Chat Widget (floating) -->
+    <div id="chat-widget" class="chat-widget">
+        <div class="chat-header">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+            <button class="chat-toggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-body" style="display: none;">
+            <div class="chat-messages" id="widget-messages">
+                <div class="message bot">
+                    <div class="message-content">Hello! How can I help you today?</div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="widget-input" placeholder="Type your question...">
+                <button id="widget-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
