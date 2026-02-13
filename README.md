@@ -27,6 +27,22 @@ If I had more time, I'd add Google login, make the chat responses stream in real
 3. Open http://localhost:8000
 4. Login with demo/demo123
 
->>> Screenshots
 
+>>> Screenshots
+@working terminal for chat bot
+<img width="809" height="337" alt="working terminal for chat bot" src="https://github.com/user-attachments/assets/ef3c429e-22a8-452a-9824-eab823ace810" />
+
+@landing page for chatbot
 <img width="592" height="692" alt="landing page for chat bot" src="https://github.com/user-attachments/assets/dbd564f8-1642-4b5f-956c-f68615de197f" />
+
+
+@login succes message
+<img width="580" height="686" alt="login succes message for chat bot" src="https://github.com/user-attachments/assets/dc98a255-b749-4e97-b3ca-93448bdd0064" />
+
+@chat page with messages
+<img width="583" height="698" alt="chat page with messages" src="https://github.com/user-attachments/assets/d3e0cf24-f107-4252-b043-a6d27a3cf886" />
+
+
+
+
+
