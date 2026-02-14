@@ -1,4 +1,3 @@
-// Admin page functionality
 class AdminManager {
     constructor() {
         this.currentDeleteId = null;
@@ -127,99 +126,30 @@ class AdminManager {
             await this.uploadFile(file);
         }
     }
-
     async uploadFile(file) {
-        const progressBar = document.getElementById('upload-progress');
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
-        const progressPercent = document.getElementById('progress-percent');
-        const uploadedFiles = document.getElementById('uploaded-files');
+      const formData = new FormData();
+      formData.append('file', file);
+    
+       try {
+        const response = await fetch('/api/documents/upload', {
+            method: 'POST',
+            body: formData
+        });
         
-        // Show progress bar
-        progressBar.style.display = 'block';
-        progressText.textContent = `Uploading: ${file.name}`;
-        progressPercent.textContent = '0%';
-        progressFill.style.width = '0%';
+        const data = await response.json();
         
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        try {
-            const response = await window.authManager.fetchWithAuth('/api/documents/upload', {
-                method: 'POST',
-                body: formData
-            });
-            
-            // Simulate progress updates (in real app, use actual progress events)
-            for (let i = 0; i <= 100; i += 10) {
-                setTimeout(() => {
-                    progressFill.style.width = i + '%';
-                    progressPercent.textContent = i + '%';
-                }, i * 20);
-            }
-            
-            const data = await response.json();
-            
-            // Complete progress
-            progressFill.style.width = '100%';
-            progressPercent.textContent = '100%';
-            
-            // Add to uploaded files list
-            if (uploadedFiles) {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'uploaded-file-item';
-                fileItem.innerHTML = `
-                    <div class="file-info">
-                        <i class="fas fa-file-${file.name.endsWith('.pdf') ? 'pdf' : 'alt'}"></i>
-                        <div>
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-status">Uploaded successfully</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-check-circle" style="color: #10b981;"></i>
-                `;
-                uploadedFiles.appendChild(fileItem);
-            }
-            
-            // Hide progress bar after delay
-            setTimeout(() => {
-                progressBar.style.display = 'none';
-                progressFill.style.width = '0%';
-            }, 2000);
-            
-            // Reload documents and stats
-            setTimeout(() => {
-                this.loadDocuments();
-                this.loadStats();
-            }, 500);
-            
-            window.authManager.showToast(`${file.name} uploaded successfully`, 'success');
-            
-        } catch (error) {
-            progressText.textContent = 'Upload failed';
-            progressPercent.textContent = 'Error';
-            progressFill.style.backgroundColor = '#dc2626';
-            
-            if (uploadedFiles) {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'uploaded-file-item';
-                fileItem.innerHTML = `
-                    <div class="file-info">
-                        <i class="fas fa-file"></i>
-                        <div>
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-status" style="color: #dc2626;">Upload failed</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-times-circle" style="color: #dc2626;"></i>
-                `;
-                uploadedFiles.appendChild(fileItem);
-            }
-            
-            console.error('Upload error:', error);
-            window.authManager.showToast(`Failed to upload: ${file.name}`, 'error');
+        if (response.ok) {
+            alert(`${file.name} uploaded successfully!`);
+            this.loadDocuments(); // Refresh the list
+        } else {
+            alert(`❌ Upload failed: ${data.detail}`);
         }
+          } catch (error) {
+        alert(`❌ Error: Could not connect to server`);
+        console.error(error);
+      }
     }
+    
 
     async loadDocuments() {
         try {
