@@ -1,66 +1,67 @@
-console.log('✅ Chat.js loaded');
-
-// Wait for page to fully load
-window.addEventListener('load', function() {
-    console.log('✅ Page loaded, setting up chat...');
-    
-    const sendBtn = document.getElementById('send-btn');
-    const messageInput = document.getElementById('message-input');
-    
-    console.log('Send button found:', sendBtn);
-    console.log('Input found:', messageInput);
-    
-    if (!sendBtn || !messageInput) {
-        console.error('❌ Chat elements not found!');
-        return;
+class ChatManager {
+    constructor() {
+        this.sessionId = 'session_' + Date.now();
+        this.init();
     }
-    
-    // Send message function
-    async function sendMessage() {
-        const message = messageInput.value.trim();
+
+    init() {
+        document.addEventListener('DOMContentLoaded', () => {
+            const sendBtn = document.getElementById('send-btn');
+            const input = document.getElementById('message-input');
+            
+            if (sendBtn && input) {
+                sendBtn.addEventListener('click', () => this.sendMessage());
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+            }
+        });
+    }
+
+    async sendMessage() {
+        const input = document.getElementById('message-input');
+        const message = input.value.trim();
+        
         if (!message) return;
         
-        console.log('Sending message:', message);
-        
-        // Clear input
-        messageInput.value = '';
-        
         // Add user message
-        addMessage(message, 'user');
+        this.addMessage(message, 'user');
+        input.value = '';
         
         // Show typing
-        showTyping();
+        this.showTyping();
         
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: message,
-                    session_id: 'session_' + Date.now()
+                    session_id: this.sessionId
                 })
             });
             
             const data = await response.json();
-            console.log('Response:', data);
             
-            removeTyping();
-            addMessage(data.response, 'bot');
+            // Remove typing and show response
+            this.removeTyping();
+            this.addMessage(data.response || 'No response', 'bot');
             
         } catch (error) {
-            console.error('Error:', error);
-            removeTyping();
-            addMessage('Error: Could not connect to server', 'bot');
+            this.removeTyping();
+            this.addMessage('Error: Could not connect', 'bot');
         }
     }
-    
-    // Add message to UI
-    function addMessage(text, sender) {
+
+    addMessage(text, sender) {
         const container = document.getElementById('chat-messages');
         if (!container) return;
         
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${sender}`;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${sender}`;
         
         const avatar = document.createElement('div');
         avatar.className = 'avatar';
@@ -79,15 +80,14 @@ window.addEventListener('load', function() {
         
         content.appendChild(textDiv);
         content.appendChild(time);
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(content);
+        msgDiv.appendChild(avatar);
+        msgDiv.appendChild(content);
         
-        container.appendChild(messageDiv);
+        container.appendChild(msgDiv);
         container.scrollTop = container.scrollHeight;
     }
-    
-    // Typing indicator
-    function showTyping() {
+
+    showTyping() {
         const container = document.getElementById('chat-messages');
         if (!container) return;
         
@@ -105,24 +105,18 @@ window.addEventListener('load', function() {
         
         typing.appendChild(avatar);
         typing.appendChild(content);
+        
         container.appendChild(typing);
         container.scrollTop = container.scrollHeight;
     }
-    
-    function removeTyping() {
+
+    removeTyping() {
         const typing = document.getElementById('typing-indicator');
         if (typing) typing.remove();
     }
-    
-    // Add event listeners
-    sendBtn.addEventListener('click', sendMessage);
-    
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-    
-    console.log('✅ Chat setup complete!');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    window.chat = new ChatManager();
 });
