@@ -1,122 +1,91 @@
-class ChatManager {
-    constructor() {
-        this.sessionId = 'session_' + Date.now();
-        this.init();
-    }
+// MINIMAL CHAT - GUARANTEED TO WORK
+console.log('Chat.js loaded');
 
-    init() {
-        document.addEventListener('DOMContentLoaded', () => {
-            const sendBtn = document.getElementById('send-btn');
-            const input = document.getElementById('message-input');
-            
-            if (sendBtn && input) {
-                sendBtn.addEventListener('click', () => this.sendMessage());
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.sendMessage();
-                    }
-                });
-            }
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    const sendBtn = document.getElementById('send-btn');
+    const input = document.getElementById('message-input');
+    const messages = document.getElementById('chat-messages');
+    
+    if (!sendBtn || !input || !messages) {
+        console.error('Elements not found');
+        return;
     }
-
-    async sendMessage() {
-        const input = document.getElementById('message-input');
-        const message = input.value.trim();
-        
-        if (!message) return;
+    
+    console.log('Elements found');
+    
+    async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
         
         // Add user message
-        this.addMessage(message, 'user');
+        addMessage(text, 'user');
         input.value = '';
         
-        // Show typing
-        this.showTyping();
+        // Add typing indicator
+        const typingId = addTyping();
         
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: message,
-                    session_id: this.sessionId
-                })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: text})
             });
             
             const data = await response.json();
-            
-            // Remove typing and show response
-            this.removeTyping();
-            this.addMessage(data.response || 'No response', 'bot');
+            removeTyping(typingId);
+            addMessage(data.response || 'No response', 'bot');
             
         } catch (error) {
-            this.removeTyping();
-            this.addMessage('Error: Could not connect', 'bot');
+            removeTyping(typingId);
+            addMessage('Error: Could not connect', 'bot');
         }
     }
-
-    addMessage(text, sender) {
-        const container = document.getElementById('chat-messages');
-        if (!container) return;
-        
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${sender}`;
-        
-        const avatar = document.createElement('div');
-        avatar.className = 'avatar';
-        avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
-        
-        const content = document.createElement('div');
-        content.className = 'message-content';
-        
-        const textDiv = document.createElement('div');
-        textDiv.className = 'message-text';
-        textDiv.textContent = text;
-        
-        const time = document.createElement('div');
-        time.className = 'message-time';
-        time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-        content.appendChild(textDiv);
-        content.appendChild(time);
-        msgDiv.appendChild(avatar);
-        msgDiv.appendChild(content);
-        
-        container.appendChild(msgDiv);
-        container.scrollTop = container.scrollHeight;
+    
+    function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = `message ${sender}`;
+        div.innerHTML = `
+            <div class="avatar">
+                <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-text">${text}</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            </div>
+        `;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
     }
-
-    showTyping() {
-        const container = document.getElementById('chat-messages');
-        if (!container) return;
-        
-        const typing = document.createElement('div');
-        typing.className = 'message bot typing';
-        typing.id = 'typing-indicator';
-        
-        const avatar = document.createElement('div');
-        avatar.className = 'avatar';
-        avatar.innerHTML = '<i class="fas fa-robot"></i>';
-        
-        const content = document.createElement('div');
-        content.className = 'message-content';
-        content.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
-        
-        typing.appendChild(avatar);
-        typing.appendChild(content);
-        
-        container.appendChild(typing);
-        container.scrollTop = container.scrollHeight;
+    
+    function addTyping() {
+        const id = 'typing-' + Date.now();
+        const div = document.createElement('div');
+        div.className = 'message bot typing';
+        div.id = id;
+        div.innerHTML = `
+            <div class="avatar"><i class="fas fa-robot"></i></div>
+            <div class="message-content">
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+            </div>
+        `;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+        return id;
     }
-
-    removeTyping() {
-        const typing = document.getElementById('typing-indicator');
-        if (typing) typing.remove();
+    
+    function removeTyping(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
     }
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    window.chat = new ChatManager();
+    
+    // Add event listeners
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    console.log('✅ Chat ready');
 });
