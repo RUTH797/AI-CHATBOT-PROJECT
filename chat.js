@@ -1,4 +1,3 @@
-// MINIMAL CHAT - GUARANTEED TO WORK
 console.log('Chat.js loaded');
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -87,5 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    console.log('✅ Chat ready');
+    console.log('Chat ready');
 });
+
